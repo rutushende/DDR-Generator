@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DDR AI Generator</title>
+
+<style>
+<style>
+/* 🔥 ADD THIS FULL BLOCK */
+
+.card {
+    background: white;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+details {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f8f9ff;
+    border-radius: 10px;
+}
+
+summary {
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    margin-left: 10px;
+}
+
+.low { background: #28a745; color: white; }
+.medium { background: #ffc107; }
+.high { background: #fd7e14; color: white; }
+.critical { background: #dc3545; color: white; }
+
+.report-img {
+    width: 100%;
+    max-width: 400px;
+    margin-top: 10px;
+    border-radius: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="toggle" onclick="toggleMode()">🌙</div>
+
+<div class="container">
+<h1>DDR AI Generator</h1>
+
+<div class="upload-box" onclick="document.getElementById('inspection').click()">
+📋 Upload Inspection Report
+<input type="file" id="inspection" hidden>
+<div id="inspectionName" class="file-name"></div>
+</div>
+
+<div class="upload-box" onclick="document.getElementById('thermal').click()">
+🌡️ Upload Thermal Report
+<input type="file" id="thermal" hidden>
+<div id="thermalName" class="file-name"></div>
+</div>
+
+<button onclick="generate()">🚀 Generate Report</button>
+
+<div class="progress" id="progress">
+<div class="progress-bar" id="bar">0%</div>
+</div>
+
+<div id="result" class="result"></div>
+
+</div>
+
+<script>
+
+function displayReport(report) {
+    let html = "";
+
+    html += `<div class="card"><h2>📋 Summary</h2><p>${report.property_issue_summary}</p></div>`;
+
+    html += `<div class="card"><h2>📍 Observations</h2>`;
+
+    report.area_wise_observations.forEach((obs) => {
+        html += `
+        <details>
+            <summary>
+                ${obs.area} 
+                <span class="badge ${obs.severity.toLowerCase()}">${obs.severity}</span>
+            </summary>
+
+            <p><b>Finding:</b> ${obs.findings[0]}</p>
+            <p><b>Source:</b> ${obs.source}</p>
+
+            ${obs.images && obs.images[0] !== "Image Not Available" 
+                ? `<img src="${obs.images[0]}" class="report-img"/>`
+                : `<p>📷 Image Not Available</p>`}
+        </details>
+        `;
+    });
+
+    html += `</div>`;
+
+    html += `<div class="card"><h2>🔍 Root Cause</h2><p>${report.probable_root_cause}</p></div>`;
+
+    html += `<div class="card"><h2>⚠ Severity</h2>
+        <p><b>${report.severity_assessment.level}</b></p>
+        <p>${report.severity_assessment.reasoning}</p>
+    </div>`;
+
+    html += `<div class="card"><h2>✅ Actions</h2><ul>
+        ${report.recommended_actions.map(a => `<li>${a}</li>`).join("")}
+    </ul></div>`;
+
+    html += `<div class="card"><h2>📝 Notes</h2><p>${report.additional_notes}</p></div>`;
+
+    document.getElementById("result").innerHTML = html;
+}
+
+</script>
+</body>
+</html>
